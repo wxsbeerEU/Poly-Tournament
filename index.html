@@ -2,45 +2,38 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>BO3 Bracket System</title>
+<title>Simpel BO3 Bracket</title>
 <style>
-    body { font-family: Arial; padding: 20px; background: #f7f7f7; }
+    body { font-family: Arial; background: #f2f2f2; padding: 20px; }
+    h1 { margin-bottom: 20px; }
     .row { display: flex; gap: 40px; }
-    .round { width: 200px; }
+    .round { width: 220px; }
     .match {
         background: white;
         padding: 10px;
         border-radius: 8px;
         margin-bottom: 25px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        box-shadow: 0 0 5px rgba(0,0,0,0.15);
     }
-    input { width: 45px; margin: 2px; padding: 4px; }
-    .nextslot {
+    input { width: 40px; padding: 5px; margin: 3px; }
+    .slot {
         margin-top: 10px;
-        font-weight: bold;
-        color: #333;
-        background: #e9e9e9;
         padding: 6px;
+        background: #e8e8e8;
         border-radius: 6px;
+        font-weight: bold;
         text-align: center;
     }
 </style>
 </head>
 <body>
 
-<h1>BO3 Bracket – 8 Players</h1>
+<h1>BO3 Bracket – Eindscore systeem (2–0 of 2–1)</h1>
 
 <div class="row">
-
-    <!-- ROUND 1 -->
-    <div class="round" id="round1"></div>
-
-    <!-- ROUND 2 -->
-    <div class="round" id="round2"></div>
-
-    <!-- ROUND 3 (Final) -->
-    <div class="round" id="round3"></div>
-
+    <div class="round" id="r1"></div>
+    <div class="round" id="r2"></div>
+    <div class="round" id="r3"></div>
 </div>
 
 <script>
@@ -51,122 +44,114 @@ let players = [
     "Player 7","Player 8"
 ];
 
-// BRACKET STRUCTUUR
 let winnersR1 = ["","","",""];
 let winnersR2 = ["",""];
 let winnerFinal = "";
 
-// ----------------------
-// MATCH HTML GENERATOR
-// ----------------------
-function createMatch(pA, pB, round, index) {
+// --------------------------
+// BO3 CHECKER (simpel)
+// --------------------------
+function decideWinner(round, index, aName, bName, targetArr, nextIndex) {
+    let a = Number(document.getElementById(round+index+"a").value || 0);
+    let b = Number(document.getElementById(round+index+"b").value || 0);
+
+    let output = document.getElementById(round+index+"slot");
+
+    if (a < 2 && b < 2) {
+        output.innerHTML = "Not decided yet";
+        targetArr[nextIndex] = "";
+        return;
+    }
+
+    if (a === b) {
+        output.innerHTML = "Not decided yet";
+        targetArr[nextIndex] = "";
+        return;
+    }
+
+    if (a > b) {
+        output.innerHTML = aName;
+        targetArr[nextIndex] = aName;
+    } else {
+        output.innerHTML = bName;
+        targetArr[nextIndex] = bName;
+    }
+
+    updateBracket();
+}
+
+// --------------------------
+// MATCH GENERATOR
+// --------------------------
+function match(pA, pB, round, index) {
     return `
         <div class="match">
             <b>${pA}</b><br>
-            <input id="${round}${index}a1" type="number">
-            <input id="${round}${index}a2" type="number">
-            <input id="${round}${index}a3" type="number"><br><br>
+            Score: <input id="${round}${index}a" type="number" min="0" max="2"> <br><br>
 
             <b>${pB}</b><br>
-            <input id="${round}${index}b1" type="number">
-            <input id="${round}${index}b2" type="number">
-            <input id="${round}${index}b3" type="number">
+            Score: <input id="${round}${index}b" type="number" min="0" max="2">
 
-            <div id="${round}${index}next" class="nextslot">Not decided yet</div>
+            <div id="${round}${index}slot" class="slot">Not decided yet</div>
         </div>
     `;
 }
 
-// ----------------------
-// SCORE-CHECKER (BO3)
-// ----------------------
-function checkWinner(round, index, pA, pB, targetArray, nextIndex) {
-    let a1 = Number(document.getElementById(round+index+"a1").value || 0);
-    let a2 = Number(document.getElementById(round+index+"a2").value || 0);
-    let a3 = Number(document.getElementById(round+index+"a3").value || 0);
-
-    let b1 = Number(document.getElementById(round+index+"b1").value || 0);
-    let b2 = Number(document.getElementById(round+index+"b2").value || 0);
-    let b3 = Number(document.getElementById(round+index+"b3").value || 0);
-
-    let winsA = 0;
-    let winsB = 0;
-
-    if (a1 || b1) (a1 > b1) ? winsA++ : winsB++;
-    if (a2 || b2) (a2 > b2) ? winsA++ : winsB++;
-    if (a3 || b3) (a3 > b3) ? winsA++ : winsB++;
-
-    let slot = document.getElementById(round+index+"next");
-
-    if (winsA >= 2) {
-        slot.innerHTML = pA;
-        targetArray[nextIndex] = pA;
-        updateBracket();
-    }
-    else if (winsB >= 2) {
-        slot.innerHTML = pB;
-        targetArray[nextIndex] = pB;
-        updateBracket();
-    }
-    else {
-        slot.innerHTML = "Not decided yet";
-        targetArray[nextIndex] = "";
-    }
-}
-
-// ----------------------
-// BRACKET BOUWEN
-// ----------------------
+// --------------------------
+// BRACKET TEKENEN
+// --------------------------
 function updateBracket() {
     // ROUND 1
-    let r1 = document.getElementById("round1");
+    let r1 = document.getElementById("r1");
     r1.innerHTML = "";
     for (let i=0; i<4; i++) {
         let pA = players[i*2];
         let pB = players[i*2+1];
-        r1.innerHTML += createMatch(pA,pB,"r1",i);
+        r1.innerHTML += match(pA, pB, "r1", i);
     }
 
     // ROUND 2
-    let r2 = document.getElementById("round2");
+    let r2 = document.getElementById("r2");
     r2.innerHTML = "";
     for (let i=0; i<2; i++) {
-        let pA = winnersR1[i*2] || "Winner Match " + (i*2+1);
-        let pB = winnersR1[i*2+1] || "Winner Match " + (i*2+2);
-        r2.innerHTML += createMatch(pA,pB,"r2",i);
+        let pA = winnersR1[i*2] || "Winner Match "+(i*2+1);
+        let pB = winnersR1[i*2+1] || "Winner Match "+(i*2+2);
+        r2.innerHTML += match(pA, pB, "r2", i);
     }
 
     // FINAL
-    let r3 = document.getElementById("round3");
+    let r3 = document.getElementById("r3");
     r3.innerHTML = "";
     let pA = winnersR2[0] || "Winner Semi 1";
     let pB = winnersR2[1] || "Winner Semi 2";
-    r3.innerHTML += createMatch(pA,pB,"r3",0);
+    r3.innerHTML += match(pA, pB, "r3", 0);
 
-    // EVENT-LISTENERS VOOR ALLE MATCHES
-    for (let i=0;i<4;i++){
-        hookMatch("r1",i,players[i*2],players[i*2+1],winnersR1,Math.floor(i/2));
+    // KOPPEL INPUT EVENTS
+    for (let i=0; i<4; i++) {
+        let A = players[i*2];
+        let B = players[i*2+1];
+        ["a","b"].forEach(s => {
+            document.getElementById("r1"+i+s).addEventListener("input", () => {
+                decideWinner("r1", i, A, B, winnersR1, Math.floor(i/2));
+            });
+        });
     }
-    for (let i=0;i<2;i++){
-        hookMatch("r2",i,
-            winnersR1[i*2] || "Winner Match "+(i*2+1),
-            winnersR1[i*2+1] || "Winner Match "+(i*2+2),
-            winnersR2, i
-        );
-    }
-    hookMatch("r3",0,
-        winnersR2[0] || "Winner Semi 1",
-        winnersR2[1] || "Winner Semi 2",
-        [winnerFinal],0
-    );
-}
 
-// Koppel inputs aan score-check
-function hookMatch(round,index,pA,pB,targetArr,nextIndex){
-    ["a1","a2","a3","b1","b2","b3"].forEach(field=>{
-        let id = round+index+field;
-        document.getElementById(id).addEventListener("input",()=>{
-            checkWinner(round,index,pA,pB,targetArr,nextIndex);
+    for (let i=0; i<2; i++) {
+        ["a","b"].forEach(s => {
+            document.getElementById("r2"+i+s).addEventListener("input", () => {
+                let A = winnersR1[i*2] || "Winner Match "+(i*2+1);
+                let B = winnersR1[i*2+1] || "Winner Match "+(i*2+2);
+                decideWinner("r2", i, A, B, winnersR2, i);
+            });
+        });
+    }
+
+    ["a","b"].forEach(s => {
+        document.getElementById("r30"+s).addEventListener("input", () => {
+            let A = winnersR2[0] || "Winner Semi 1";
+            let B = winnersR2[1] || "Winner Semi 2";
+            decideWinner("r3", 0, A, B, [winnerFinal], 0);
         });
     });
 }
