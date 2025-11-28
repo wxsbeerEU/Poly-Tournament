@@ -8,105 +8,47 @@
   body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
   .round { display: inline-block; vertical-align: top; margin-right: 40px; }
   .match { background: #fff; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; width: 220px; }
-  input { width: 40px; }
   .winner-box { background: #d4ffd4; padding: 15px; margin-top: 20px; border-radius: 8px; font-size: 20px; font-weight: bold; }
 </style>
 </head>
 <body>
 <h2>8-Speler Bracket Systeem</h2>
-<p>Pas enkel de scores aan; namen schuiven automatisch door.</p>
+<p>Scores zijn vooraf ingesteld en niet aanpasbaar op de site.</p>
 
 <div class="round">
   <h3>Kwartfinales</h3>
   <div class="match">
-    <span id="p1">Speler 1</span> <input type="number" id="s1" value="0"><br>
-    <span id="p2">Speler 2</span> <input type="number" id="s2" value="0">
+    Renzo (2) vs Lennart (1)
   </div>
   <div class="match">
-    <span id="p3">Speler 3</span> <input type="number" id="s3" value="0"><br>
-    <span id="p4">Speler 4</span> <input type="number" id="s4" value="0">
+    Paul-David (0) vs Remi (2)
   </div>
   <div class="match">
-    <span id="p5">Speler 5</span> <input type="number" id="s5" value="0"><br>
-    <span id="p6">Speler 6</span> <input type="number" id="s6" value="0">
+    Nino (1) vs Noah (2)
   </div>
   <div class="match">
-    <span id="p7">Speler 7</span> <input type="number" id="s7" value="0"><br>
-    <span id="p8">Speler 8</span> <input type="number" id="s8" value="0">
+    Daniel (2) vs Arne (0)
   </div>
 </div>
 
 <div class="round">
   <h3>Halve Finales</h3>
   <div class="match">
-    <span id="sf1">---</span> <input type="number" id="ssf1" value="0"><br>
-    <span id="sf2">---</span> <input type="number" id="ssf2" value="0">
+    Renzo (2) vs Remi (0)
   </div>
   <div class="match">
-    <span id="sf3">---</span> <input type="number" id="ssf3" value="0"><br>
-    <span id="sf4">---</span> <input type="number" id="ssf4" value="0">
+    Noah (1) vs Daniel (2)
   </div>
 </div>
 
 <div class="round">
   <h3>Finale</h3>
   <div class="match">
-    <span id="f1">---</span> <input type="number" id="fs1" value="0"><br>
-    <span id="f2">---</span> <input type="number" id="fs2" value="0">
+    Renzo (2) vs Daniel (0)
   </div>
 </div>
 
-<div class="winner-box" id="winner">Winnaar: ---</div>
-
-<script>
-function updateBracket() {
-  const players = [
-    { name: p1.textContent, score: parseInt(s1.value) },
-    { name: p2.textContent, score: parseInt(s2.value) },
-    { name: p3.textContent, score: parseInt(s3.value) },
-    { name: p4.textContent, score: parseInt(s4.value) },
-    { name: p5.textContent, score: parseInt(s5.value) },
-    { name: p6.textContent, score: parseInt(s6.value) },
-    { name: p7.textContent, score: parseInt(s7.value) },
-    { name: p8.textContent, score: parseInt(s8.value) }
-  ];
-
-  // Kwartfinale winnaars
-  const qfWinners = [
-    players[0].score > players[1].score ? players[0].name : players[1].name,
-    players[2].score > players[3].score ? players[2].name : players[3].name,
-    players[4].score > players[5].score ? players[4].name : players[5].name,
-    players[6].score > players[7].score ? players[6].name : players[7].name
-  ];
-
-  sf1.textContent = qfWinners[0];
-  sf2.textContent = qfWinners[1];
-  sf3.textContent = qfWinners[2];
-  sf4.textContent = qfWinners[3];
-
-  // Halve finale winnaars
-  const sfScores = [
-    parseInt(ssf1.value), parseInt(ssf2.value),
-    parseInt(ssf3.value), parseInt(ssf4.value)
-  ];
-
-  const sfWinners = [
-    sfScores[0] > sfScores[1] ? sf1.textContent : sf2.textContent,
-    sfScores[2] > sfScores[3] ? sf3.textContent : sf4.textContent
-  ];
-
-  f1.textContent = sfWinners[0];
-  f2.textContent = sfWinners[1];
-
-  // Finale winnaar
-  const fScores = [ parseInt(fs1.value), parseInt(fs2.value) ];
-  const finalWinner = fScores[0] > fScores[1] ? f1.textContent : f2.textContent;
-
-  document.getElementById("winner").textContent = "Winnaar: " + finalWinner;
-}
-
-document.querySelectorAll("input").forEach(inp => inp.addEventListener("input", updateBracket));
-</script>
+<div class="winner-box">Winnaar: Renzo</div>
 
 </body>
 </html>
