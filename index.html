@@ -30,7 +30,7 @@ const spelers = [
 
 // Scores halve finale en finale instellen (vul '/' als nog niet gespeeld)
 let halveFinaleScores = [ { s1: '2', s2: '0' }, { s1: '/', s2: '/' } ];
-let finaleScores = { s1: '2', s2: '0' };
+let finaleScores = { s1: '/', s2: '/' };
 
 function bepaalWinnaar(speler1, speler2, score1='/', score2='/') {
   if(score1 === '/' || score2 === '/') return { naam: 'Not decided yet', score: '/' };
