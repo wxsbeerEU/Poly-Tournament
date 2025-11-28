@@ -18,10 +18,7 @@
   body::before {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: rgba(255, 255, 255, 0.7);
     z-index: -1;
   }
@@ -30,11 +27,12 @@
     margin-bottom: 5px;
   }
 
+  /* --- Layout --- */
   .tournament {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 60px;
+    align-items: flex-start;
+    gap: 40px; /* dichter bij elkaar */
     margin-top: 40px;
   }
 
@@ -42,7 +40,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 50px;
+    position: relative;
     min-width: 220px;
   }
 
@@ -54,28 +52,66 @@
     width: 220px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: relative;
   }
 
-  /* Driehoek-vorm (verticale offset) */
+  /* --- Driehoekvorm afstand --- */
   .quarter .match:nth-child(1) { margin-top: 0; }
-  .quarter .match:nth-child(2) { margin-top: 60px; }
-  .quarter .match:nth-child(3) { margin-top: 120px; }
-  .quarter .match:nth-child(4) { margin-top: 180px; }
+  .quarter .match:nth-child(2) { margin-top: 50px; }
+  .quarter .match:nth-child(3) { margin-top: 100px; }
+  .quarter .match:nth-child(4) { margin-top: 150px; }
 
-  .semi .match:nth-child(1) { margin-top: 90px; }
-  .semi .match:nth-child(2) { margin-top: 200px; }
+  .semi .match:nth-child(1) { margin-top: 65px; }
+  .semi .match:nth-child(2) { margin-top: 160px; }
 
-  .final .match:nth-child(1) { margin-top: 150px; }
+  .final .match:nth-child(1) { margin-top: 120px; }
 
+  /* --- Lijnen tussen rondes --- */
+
+  /* Van kwartfinale naar halve finale */
+  .quarter .match::after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 2px;
+    background: #777;
+    right: -40px;
+    top: 50%;
+  }
+
+  /* Van halve finale naar finale */
+  .semi .match::after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 2px;
+    background: #555;
+    right: -40px;
+    top: 50%;
+  }
+
+  /* Finalist naar winnaar */
+  .final .match::after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 2px;
+    background: #333;
+    right: -40px;
+    top: 50%;
+  }
+
+  /* --- Winnaar box direct rechts van finale --- */
   .winner-box {
-    display: inline-block;
     background: #d4ffd4;
     padding: 15px 25px;
-    margin-top: 40px;
     border-radius: 8px;
     font-size: 22px;
     font-weight: bold;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    align-self: center;
+    margin-top: 115px; /* uitlijnen met finale */
+    white-space: nowrap;
   }
 </style>
 </head>
@@ -88,9 +124,8 @@
   <div class="round quarter" id="quarter"></div>
   <div class="round semi" id="semi"></div>
   <div class="round final" id="final"></div>
+  <div class="winner-box" id="winner">Winnaar: ?</div>
 </div>
-
-<div class="winner-box" id="winner">Winnaar: ?</div>
 
 <script>
 // Spelers en scores in code instellen
@@ -110,7 +145,7 @@ let halveFinaleScores = [ { s1: '2', s2: '0' }, { s1: '/', s2: '/' } ];
 let finaleScores = { s1: '/', s2: '/' };
 
 function bepaalWinnaar(speler1, speler2, score1='/', score2='/') {
-  if(score1 === '/' || score2 === '/') return { naam: 'Nog niet beslist', score: '/' };
+  if (score1 === '/' || score2 === '/') return { naam: 'Nog niet beslist', score: '/' };
   return parseInt(score1) > parseInt(score2) ? speler1 : speler2;
 }
 
