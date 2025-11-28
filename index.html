@@ -15,40 +15,56 @@
 <h2>8-Speler Bracket Systeem</h2>
 <p>Scores zijn vooraf ingesteld en niet aanpasbaar op de site.</p>
 
-<div class="round">
-  <h3>Kwartfinales</h3>
-  <div class="match">
-    Renzo (2) vs Lennart (1)
-  </div>
-  <div class="match">
-    Paul-David (0) vs Remi (2)
-  </div>
-  <div class="match">
-    Nino (1) vs Noah (2)
-  </div>
-  <div class="match">
-    Daniel (2) vs Arne (0)
-  </div>
-</div>
+<script>
+// Scores en spelers instellen in de code
+const spelers = [
+  { naam: 'Renzo', score: '2' },
+  { naam: 'Lennart', score: '1' },
+  { naam: 'Paul-David', score: '/' },
+  { naam: 'Remi', score: '2' },
+  { naam: 'Nino', score: '1' },
+  { naam: 'Noah', score: '2' },
+  { naam: 'Daniel', score: '2' },
+  { naam: 'Arne', score: '/' }
+];
 
-<div class="round">
-  <h3>Halve Finales</h3>
-  <div class="match">
-    Renzo (2) vs Remi (0)
-  </div>
-  <div class="match">
-    Noah (1) vs Daniel (2)
-  </div>
-</div>
+// Functie om winnaar van een match te bepalen
+function bepaalWinnaar(speler1, speler2) {
+  const s1 = speler1.score;
+  const s2 = speler2.score;
+  if (s1 === '/' || s2 === '/') return { naam: 'Not decided yet', score: '/' };
+  return parseInt(s1) > parseInt(s2) ? speler1 : speler2;
+}
 
-<div class="round">
-  <h3>Finale</h3>
-  <div class="match">
-    Renzo (2) vs Daniel (0)
-  </div>
-</div>
+// Kwartfinales
+const qf1 = bepaalWinnaar(spelers[0], spelers[1]);
+const qf2 = bepaalWinnaar(spelers[2], spelers[3]);
+const qf3 = bepaalWinnaar(spelers[4], spelers[5]);
+const qf4 = bepaalWinnaar(spelers[6], spelers[7]);
 
-<div class="winner-box">Winnaar: Renzo</div>
+// Halve finales
+const sf1 = bepaalWinnaar(qf1, qf2);
+const sf2 = bepaalWinnaar(qf3, qf4);
+
+// Finale
+const finale = bepaalWinnaar(sf1, sf2);
+
+// HTML weergeven
+document.write('<div class="round"><h3>Kwartfinales</h3>');
+document.write('<div class="match">' + spelers[0].naam + ' (' + spelers[0].score + ') vs ' + spelers[1].naam + ' (' + spelers[1].score + ')</div>');
+document.write('<div class="match">' + spelers[2].naam + ' (' + spelers[2].score + ') vs ' + spelers[3].naam + ' (' + spelers[3].score + ')</div>');
+document.write('<div class="match">' + spelers[4].naam + ' (' + spelers[4].score + ') vs ' + spelers[5].naam + ' (' + spelers[5].score + ')</div>');
+document.write('<div class="match">' + spelers[6].naam + ' (' + spelers[6].score + ') vs ' + spelers[7].naam + ' (' + spelers[7].score + ')</div></div>');
+
+document.write('<div class="round"><h3>Halve Finales</h3>');
+document.write('<div class="match">' + qf1.naam + ' (' + qf1.score + ') vs ' + qf2.naam + ' (' + qf2.score + ')</div>');
+document.write('<div class="match">' + qf3.naam + ' (' + qf3.score + ') vs ' + qf4.naam + ' (' + qf4.score + ')</div></div>');
+
+document.write('<div class="round"><h3>Finale</h3>');
+document.write('<div class="match">' + sf1.naam + ' (' + sf1.score + ') vs ' + sf2.naam + ' (' + sf2.score + ')</div></div>');
+
+document.write('<div class="winner-box">Winnaar: ' + finale.naam + '</div>');
+</script>
 
 </body>
 </html>
