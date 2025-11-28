@@ -4,23 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Poly Tourney - VUB</title>
-
-<!-- iOS web app instellingen -->
-<link rel="apple-touch-icon" href="icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Poly Tourney">
-<meta name="theme-color" content="#ffffff">
-
 <style>
   body {
     font-family: Arial, sans-serif;
     padding: 20px;
-    background: url('background.jpg') no-repeat center center fixed;
+    background: url('jouw-afbeelding.jpg') no-repeat center center fixed;
     background-size: cover;
     position: relative;
   }
-  /* Vervagingslaag */
   body::before {
     content: '';
     position: fixed;
@@ -28,36 +19,20 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.7); /* Vervaagt achtergrond */
     z-index: -1;
   }
-  /* Standaard bracket styling */
   .round { display: inline-block; vertical-align: top; margin-right: 40px; }
   .match { background: #fff; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; width: 220px; }
-  .winner-box {
-    display: inline-block;
-    background: #d4ffd4;
-    padding: 10px 15px;
-    margin-top: 20px;
-    border-radius: 8px;
-    font-size: 20px;
-    font-weight: bold;
-  }
-
-  /* Specifieke achtergrond voor kleinere schermen (iPhone/ mobiel) */
-  @media (max-width: 768px) {
-    body {
-      background: url('background2.jpg') no-repeat center center fixed;
-      background-size: cover;
-    }
-  }
+  .winner-box { background: #d4ffd4; padding: 15px; margin-top: 20px; border-radius: 8px; font-size: 20px; font-weight: bold; }
 </style>
 </head>
 <body>
 <h2>Poly Tourney - VUB</h2>
-<p>Battle of Polytopia tournament to see who is the Polytopia King.</p>
+<p>Battle of Polytopia tournament in the VUB.</p>
 
 <script>
+// Spelers en scores in code instellen
 const spelers = [
   { naam: 'Renzo', score: '2' },
   { naam: 'Lennart', score: '0' },
@@ -69,6 +44,7 @@ const spelers = [
   { naam: 'Arne', score: '2' }
 ];
 
+// Scores halve finale en finale instellen
 let halveFinaleScores = [ { s1: '2', s2: '0' }, { s1: '/', s2: '/' } ];
 let finaleScores = { s1: '/', s2: '/' };
 
@@ -77,14 +53,17 @@ function bepaalWinnaar(speler1, speler2, score1='/', score2='/') {
   return parseInt(score1) > parseInt(score2) ? speler1 : speler2;
 }
 
+// Kwartfinales
 const qf1 = bepaalWinnaar(spelers[0], spelers[1], spelers[0].score, spelers[1].score);
 const qf2 = bepaalWinnaar(spelers[2], spelers[3], spelers[2].score, spelers[3].score);
 const qf3 = bepaalWinnaar(spelers[4], spelers[5], spelers[4].score, spelers[5].score);
 const qf4 = bepaalWinnaar(spelers[6], spelers[7], spelers[6].score, spelers[7].score);
 
+// Halve finales
 const sf1 = bepaalWinnaar(qf1, qf2, halveFinaleScores[0].s1, halveFinaleScores[0].s2);
 const sf2 = bepaalWinnaar(qf3, qf4, halveFinaleScores[1].s1, halveFinaleScores[1].s2);
 
+// Finale
 const finale = bepaalWinnaar(sf1, sf2, finaleScores.s1, finaleScores.s2);
 
 // HTML weergeven
