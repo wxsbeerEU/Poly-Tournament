@@ -5,35 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>8-Speler Bracket</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    padding: 20px;
-  }
-  .round {
-    display: inline-block;
-    vertical-align: top;
-    margin-right: 40px;
-  }
-  .match {
-    background: #fff;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 200px;
-  }
-  input {
-    width: 40px;
-  }
-  .winner-box {
-    background: #d4ffd4;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 8px;
-    font-size: 20px;
-    font-weight: bold;
-  }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+  .round { display: inline-block; vertical-align: top; margin-right: 40px; }
+  .match { background: #fff; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; width: 220px; }
+  input { width: 40px; }
+  .winner-box { background: #d4ffd4; padding: 15px; margin-top: 20px; border-radius: 8px; font-size: 20px; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -43,19 +19,19 @@
 <div class="round">
   <h3>Kwartfinales</h3>
   <div class="match">
-    <span id="p1">Speler 1</span> <input type="number" id="s1" value="0"> <br>
+    <span id="p1">Speler 1</span> <input type="number" id="s1" value="0"><br>
     <span id="p2">Speler 2</span> <input type="number" id="s2" value="0">
   </div>
   <div class="match">
-    <span id="p3">Speler 3</span> <input type="number" id="s3" value="0"> <br>
+    <span id="p3">Speler 3</span> <input type="number" id="s3" value="0"><br>
     <span id="p4">Speler 4</span> <input type="number" id="s4" value="0">
   </div>
   <div class="match">
-    <span id="p5">Speler 5</span> <input type="number" id="s5" value="0"> <br>
+    <span id="p5">Speler 5</span> <input type="number" id="s5" value="0"><br>
     <span id="p6">Speler 6</span> <input type="number" id="s6" value="0">
   </div>
   <div class="match">
-    <span id="p7">Speler 7</span> <input type="number" id="s7" value="0"> <br>
+    <span id="p7">Speler 7</span> <input type="number" id="s7" value="0"><br>
     <span id="p8">Speler 8</span> <input type="number" id="s8" value="0">
   </div>
 </div>
@@ -63,20 +39,20 @@
 <div class="round">
   <h3>Halve Finales</h3>
   <div class="match">
-    <span id="sf1">---</span> <br>
-    <span id="sf2">---</span>
+    <span id="sf1">---</span> <input type="number" id="ssf1" value="0"><br>
+    <span id="sf2">---</span> <input type="number" id="ssf2" value="0">
   </div>
   <div class="match">
-    <span id="sf3">---</span> <br>
-    <span id="sf4">---</span>
+    <span id="sf3">---</span> <input type="number" id="ssf3" value="0"><br>
+    <span id="sf4">---</span> <input type="number" id="ssf4" value="0">
   </div>
 </div>
 
 <div class="round">
   <h3>Finale</h3>
   <div class="match">
-    <span id="f1">---</span> <br>
-    <span id="f2">---</span>
+    <span id="f1">---</span> <input type="number" id="fs1" value="0"><br>
+    <span id="f2">---</span> <input type="number" id="fs2" value="0">
   </div>
 </div>
 
@@ -95,7 +71,7 @@ function updateBracket() {
     { name: p8.textContent, score: parseInt(s8.value) }
   ];
 
-  // Kwartfinales winners
+  // Kwartfinale winnaars
   const qfWinners = [
     players[0].score > players[1].score ? players[0].name : players[1].name,
     players[2].score > players[3].score ? players[2].name : players[3].name,
@@ -108,23 +84,28 @@ function updateBracket() {
   sf3.textContent = qfWinners[2];
   sf4.textContent = qfWinners[3];
 
-  // Halve finale scores (automatisch 0 voor vergelijking)
-  const sfWinners = [
-    sf1.textContent,
-    sf3.textContent
+  // Halve finale winnaars
+  const sfScores = [
+    parseInt(ssf1.value), parseInt(ssf2.value),
+    parseInt(ssf3.value), parseInt(ssf4.value)
   ];
 
-  f1.textContent = sf1.textContent;
-  f2.textContent = sf3.textContent;
+  const sfWinners = [
+    sfScores[0] > sfScores[1] ? sf1.textContent : sf2.textContent,
+    sfScores[2] > sfScores[3] ? sf3.textContent : sf4.textContent
+  ];
 
-  // Finale winnaar (altijd eerste voor nu; pas aan bij score inputs)
-  const winner = f1.textContent;
-  document.getElementById("winner").textContent = "Winnaar: " + winner;
+  f1.textContent = sfWinners[0];
+  f2.textContent = sfWinners[1];
+
+  // Finale winnaar
+  const fScores = [ parseInt(fs1.value), parseInt(fs2.value) ];
+  const finalWinner = fScores[0] > fScores[1] ? f1.textContent : f2.textContent;
+
+  document.getElementById("winner").textContent = "Winnaar: " + finalWinner;
 }
 
-document.querySelectorAll("input").forEach(inp => {
-  inp.addEventListener("input", updateBracket);
-});
+document.querySelectorAll("input").forEach(inp => inp.addEventListener("input", updateBracket));
 </script>
 
 </body>
