@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Poly Tourney - VUB</title>
+
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -11,7 +12,9 @@
     background: url('background.jpg') no-repeat center center fixed;
     background-size: cover;
     position: relative;
+    text-align: center;
   }
+
   body::before {
     content: '';
     position: fixed;
@@ -19,17 +22,75 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.7); /* Vervaagt achtergrond */
+    background: rgba(255, 255, 255, 0.7);
     z-index: -1;
   }
-  .round { display: inline-block; vertical-align: top; margin-right: 40px; }
-  .match { background: #fff; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; width: 220px; }
-  .winner-box { display: inline-block; background: #d4ffd4; padding: 15px; margin-top: 20px; border-radius: 8px; font-size: 20px; font-weight: bold; }
+
+  h2 {
+    margin-bottom: 5px;
+  }
+
+  .tournament {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    margin-top: 40px;
+  }
+
+  .round {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+    min-width: 220px;
+  }
+
+  .match {
+    background: #fff;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 220px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Driehoek-vorm (verticale offset) */
+  .quarter .match:nth-child(1) { margin-top: 0; }
+  .quarter .match:nth-child(2) { margin-top: 60px; }
+  .quarter .match:nth-child(3) { margin-top: 120px; }
+  .quarter .match:nth-child(4) { margin-top: 180px; }
+
+  .semi .match:nth-child(1) { margin-top: 90px; }
+  .semi .match:nth-child(2) { margin-top: 200px; }
+
+  .final .match:nth-child(1) { margin-top: 150px; }
+
+  .winner-box {
+    display: inline-block;
+    background: #d4ffd4;
+    padding: 15px 25px;
+    margin-top: 40px;
+    border-radius: 8px;
+    font-size: 22px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
 </style>
 </head>
 <body>
+
 <h2>Poly Tourney - VUB</h2>
 <p>Battle of Polytopia tournament in the VUB.</p>
+
+<div class="tournament">
+  <div class="round quarter" id="quarter"></div>
+  <div class="round semi" id="semi"></div>
+  <div class="round final" id="final"></div>
+</div>
+
+<div class="winner-box" id="winner">Winnaar: ?</div>
 
 <script>
 // Spelers en scores in code instellen
@@ -49,38 +110,47 @@ let halveFinaleScores = [ { s1: '2', s2: '0' }, { s1: '/', s2: '/' } ];
 let finaleScores = { s1: '/', s2: '/' };
 
 function bepaalWinnaar(speler1, speler2, score1='/', score2='/') {
-  if(score1 === '/' || score2 === '/') return { naam: 'Not decided yet', score: '/' };
+  if(score1 === '/' || score2 === '/') return { naam: 'Nog niet beslist', score: '/' };
   return parseInt(score1) > parseInt(score2) ? speler1 : speler2;
 }
 
 // Kwartfinales
-const qf1 = bepaalWinnaar(spelers[0], spelers[1], spelers[0].score, spelers[1].score);
-const qf2 = bepaalWinnaar(spelers[2], spelers[3], spelers[2].score, spelers[3].score);
-const qf3 = bepaalWinnaar(spelers[4], spelers[5], spelers[4].score, spelers[5].score);
-const qf4 = bepaalWinnaar(spelers[6], spelers[7], spelers[6].score, spelers[7].score);
+const qf = [
+  bepaalWinnaar(spelers[0], spelers[1], spelers[0].score, spelers[1].score),
+  bepaalWinnaar(spelers[2], spelers[3], spelers[2].score, spelers[3].score),
+  bepaalWinnaar(spelers[4], spelers[5], spelers[4].score, spelers[5].score),
+  bepaalWinnaar(spelers[6], spelers[7], spelers[6].score, spelers[7].score)
+];
 
 // Halve finales
-const sf1 = bepaalWinnaar(qf1, qf2, halveFinaleScores[0].s1, halveFinaleScores[0].s2);
-const sf2 = bepaalWinnaar(qf3, qf4, halveFinaleScores[1].s1, halveFinaleScores[1].s2);
+const sf = [
+  bepaalWinnaar(qf[0], qf[1], halveFinaleScores[0].s1, halveFinaleScores[0].s2),
+  bepaalWinnaar(qf[2], qf[3], halveFinaleScores[1].s1, halveFinaleScores[1].s2)
+];
 
 // Finale
-const finale = bepaalWinnaar(sf1, sf2, finaleScores.s1, finaleScores.s2);
+const finale = bepaalWinnaar(sf[0], sf[1], finaleScores.s1, finaleScores.s2);
 
-// HTML weergeven
-document.write('<div class="round"><h3>Kwartfinales</h3>');
-document.write('<div class="match">' + spelers[0].naam + ' (' + spelers[0].score + ') vs ' + spelers[1].naam + ' (' + spelers[1].score + ')</div>');
-document.write('<div class="match">' + spelers[2].naam + ' (' + spelers[2].score + ') vs ' + spelers[3].naam + ' (' + spelers[3].score + ')</div>');
-document.write('<div class="match">' + spelers[4].naam + ' (' + spelers[4].score + ') vs ' + spelers[5].naam + ' (' + spelers[5].score + ')</div>');
-document.write('<div class="match">' + spelers[6].naam + ' (' + spelers[6].score + ') vs ' + spelers[7].naam + ' (' + spelers[7].score + ')</div></div>');
+// HTML genereren
+const qDiv = document.getElementById("quarter");
+const sDiv = document.getElementById("semi");
+const fDiv = document.getElementById("final");
 
-document.write('<div class="round"><h3>Halve Finales</h3>');
-document.write('<div class="match">' + qf1.naam + ' (' + halveFinaleScores[0].s1 + ') vs ' + qf2.naam + ' (' + halveFinaleScores[0].s2 + ')</div>');
-document.write('<div class="match">' + qf3.naam + ' (' + halveFinaleScores[1].s1 + ') vs ' + qf4.naam + ' (' + halveFinaleScores[1].s2 + ')</div></div>');
+for (let i = 0; i < spelers.length; i += 2) {
+  qDiv.innerHTML += `
+    <div class="match">${spelers[i].naam} (${spelers[i].score})<br>vs<br>${spelers[i+1].naam} (${spelers[i+1].score})</div>`;
+}
 
-document.write('<div class="round"><h3>Finale</h3>');
-document.write('<div class="match">' + sf1.naam + ' (' + finaleScores.s1 + ') vs ' + sf2.naam + ' (' + finaleScores.s2 + ')</div></div>');
+sDiv.innerHTML += `
+  <div class="match">${qf[0].naam} (${halveFinaleScores[0].s1})<br>vs<br>${qf[1].naam} (${halveFinaleScores[0].s2})</div>
+  <div class="match">${qf[2].naam} (${halveFinaleScores[1].s1})<br>vs<br>${qf[3].naam} (${halveFinaleScores[1].s2})</div>
+`;
 
-document.write('<div class="winner-box">Winnaar: ' + finale.naam + '</div>');
+fDiv.innerHTML = `
+  <div class="match">${sf[0].naam} (${finaleScores.s1})<br>vs<br>${sf[1].naam} (${finaleScores.s2})</div>
+`;
+
+document.getElementById("winner").innerText = "Winnaar: " + finale.naam;
 </script>
 
 </body>
