@@ -1,162 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
-<meta charset="UTF-8">
-<title>Simpel BO3 Bracket</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>8-Speler Bracket</title>
 <style>
-    body { font-family: Arial; background: #f2f2f2; padding: 20px; }
-    h1 { margin-bottom: 20px; }
-    .row { display: flex; gap: 40px; }
-    .round { width: 220px; }
-    .match {
-        background: white;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 25px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.15);
-    }
-    input { width: 40px; padding: 5px; margin: 3px; }
-    .slot {
-        margin-top: 10px;
-        padding: 6px;
-        background: #e8e8e8;
-        border-radius: 6px;
-        font-weight: bold;
-        text-align: center;
-    }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    padding: 20px;
+  }
+  .round {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 40px;
+  }
+  .match {
+    background: #fff;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 200px;
+  }
+  input {
+    width: 40px;
+  }
+  .winner-box {
+    background: #d4ffd4;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
+<h2>8-Speler Bracket Systeem</h2>
+<p>Pas enkel de scores aan; namen schuiven automatisch door.</p>
 
-<h1>BO3 Bracket – Eindscore systeem (2–0 of 2–1)</h1>
-
-<div class="row">
-    <div class="round" id="r1"></div>
-    <div class="round" id="r2"></div>
-    <div class="round" id="r3"></div>
+<div class="round">
+  <h3>Kwartfinales</h3>
+  <div class="match">
+    <span id="p1">Speler 1</span> <input type="number" id="s1" value="0"> <br>
+    <span id="p2">Speler 2</span> <input type="number" id="s2" value="0">
+  </div>
+  <div class="match">
+    <span id="p3">Speler 3</span> <input type="number" id="s3" value="0"> <br>
+    <span id="p4">Speler 4</span> <input type="number" id="s4" value="0">
+  </div>
+  <div class="match">
+    <span id="p5">Speler 5</span> <input type="number" id="s5" value="0"> <br>
+    <span id="p6">Speler 6</span> <input type="number" id="s6" value="0">
+  </div>
+  <div class="match">
+    <span id="p7">Speler 7</span> <input type="number" id="s7" value="0"> <br>
+    <span id="p8">Speler 8</span> <input type="number" id="s8" value="0">
+  </div>
 </div>
 
+<div class="round">
+  <h3>Halve Finales</h3>
+  <div class="match">
+    <span id="sf1">---</span> <br>
+    <span id="sf2">---</span>
+  </div>
+  <div class="match">
+    <span id="sf3">---</span> <br>
+    <span id="sf4">---</span>
+  </div>
+</div>
+
+<div class="round">
+  <h3>Finale</h3>
+  <div class="match">
+    <span id="f1">---</span> <br>
+    <span id="f2">---</span>
+  </div>
+</div>
+
+<div class="winner-box" id="winner">Winnaar: ---</div>
+
 <script>
-let players = [
-    "Player 1","Player 2",
-    "Player 3","Player 4",
-    "Player 5","Player 6",
-    "Player 7","Player 8"
-];
-
-let winnersR1 = ["","","",""];
-let winnersR2 = ["",""];
-let winnerFinal = "";
-
-// --------------------------
-// BO3 CHECKER (simpel)
-// --------------------------
-function decideWinner(round, index, aName, bName, targetArr, nextIndex) {
-    let a = Number(document.getElementById(round+index+"a").value || 0);
-    let b = Number(document.getElementById(round+index+"b").value || 0);
-
-    let output = document.getElementById(round+index+"slot");
-
-    if (a < 2 && b < 2) {
-        output.innerHTML = "Not decided yet";
-        targetArr[nextIndex] = "";
-        return;
-    }
-
-    if (a === b) {
-        output.innerHTML = "Not decided yet";
-        targetArr[nextIndex] = "";
-        return;
-    }
-
-    if (a > b) {
-        output.innerHTML = aName;
-        targetArr[nextIndex] = aName;
-    } else {
-        output.innerHTML = bName;
-        targetArr[nextIndex] = bName;
-    }
-
-    updateBracket();
-}
-
-// --------------------------
-// MATCH GENERATOR
-// --------------------------
-function match(pA, pB, round, index) {
-    return `
-        <div class="match">
-            <b>${pA}</b><br>
-            Score: <input id="${round}${index}a" type="number" min="0" max="2"> <br><br>
-
-            <b>${pB}</b><br>
-            Score: <input id="${round}${index}b" type="number" min="0" max="2">
-
-            <div id="${round}${index}slot" class="slot">Not decided yet</div>
-        </div>
-    `;
-}
-
-// --------------------------
-// BRACKET TEKENEN
-// --------------------------
 function updateBracket() {
-    // ROUND 1
-    let r1 = document.getElementById("r1");
-    r1.innerHTML = "";
-    for (let i=0; i<4; i++) {
-        let pA = players[i*2];
-        let pB = players[i*2+1];
-        r1.innerHTML += match(pA, pB, "r1", i);
-    }
+  const players = [
+    { name: p1.textContent, score: parseInt(s1.value) },
+    { name: p2.textContent, score: parseInt(s2.value) },
+    { name: p3.textContent, score: parseInt(s3.value) },
+    { name: p4.textContent, score: parseInt(s4.value) },
+    { name: p5.textContent, score: parseInt(s5.value) },
+    { name: p6.textContent, score: parseInt(s6.value) },
+    { name: p7.textContent, score: parseInt(s7.value) },
+    { name: p8.textContent, score: parseInt(s8.value) }
+  ];
 
-    // ROUND 2
-    let r2 = document.getElementById("r2");
-    r2.innerHTML = "";
-    for (let i=0; i<2; i++) {
-        let pA = winnersR1[i*2] || "Winner Match "+(i*2+1);
-        let pB = winnersR1[i*2+1] || "Winner Match "+(i*2+2);
-        r2.innerHTML += match(pA, pB, "r2", i);
-    }
+  // Kwartfinales winners
+  const qfWinners = [
+    players[0].score > players[1].score ? players[0].name : players[1].name,
+    players[2].score > players[3].score ? players[2].name : players[3].name,
+    players[4].score > players[5].score ? players[4].name : players[5].name,
+    players[6].score > players[7].score ? players[6].name : players[7].name
+  ];
 
-    // FINAL
-    let r3 = document.getElementById("r3");
-    r3.innerHTML = "";
-    let pA = winnersR2[0] || "Winner Semi 1";
-    let pB = winnersR2[1] || "Winner Semi 2";
-    r3.innerHTML += match(pA, pB, "r3", 0);
+  sf1.textContent = qfWinners[0];
+  sf2.textContent = qfWinners[1];
+  sf3.textContent = qfWinners[2];
+  sf4.textContent = qfWinners[3];
 
-    // KOPPEL INPUT EVENTS
-    for (let i=0; i<4; i++) {
-        let A = players[i*2];
-        let B = players[i*2+1];
-        ["a","b"].forEach(s => {
-            document.getElementById("r1"+i+s).addEventListener("input", () => {
-                decideWinner("r1", i, A, B, winnersR1, Math.floor(i/2));
-            });
-        });
-    }
+  // Halve finale scores (automatisch 0 voor vergelijking)
+  const sfWinners = [
+    sf1.textContent,
+    sf3.textContent
+  ];
 
-    for (let i=0; i<2; i++) {
-        ["a","b"].forEach(s => {
-            document.getElementById("r2"+i+s).addEventListener("input", () => {
-                let A = winnersR1[i*2] || "Winner Match "+(i*2+1);
-                let B = winnersR1[i*2+1] || "Winner Match "+(i*2+2);
-                decideWinner("r2", i, A, B, winnersR2, i);
-            });
-        });
-    }
+  f1.textContent = sf1.textContent;
+  f2.textContent = sf3.textContent;
 
-    ["a","b"].forEach(s => {
-        document.getElementById("r30"+s).addEventListener("input", () => {
-            let A = winnersR2[0] || "Winner Semi 1";
-            let B = winnersR2[1] || "Winner Semi 2";
-            decideWinner("r3", 0, A, B, [winnerFinal], 0);
-        });
-    });
+  // Finale winnaar (altijd eerste voor nu; pas aan bij score inputs)
+  const winner = f1.textContent;
+  document.getElementById("winner").textContent = "Winnaar: " + winner;
 }
 
-updateBracket();
+document.querySelectorAll("input").forEach(inp => {
+  inp.addEventListener("input", updateBracket);
+});
 </script>
 
 </body>
