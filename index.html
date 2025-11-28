@@ -13,41 +13,42 @@
 </head>
 <body>
 <h2>8-Speler Bracket Systeem</h2>
-<p>Scores zijn vooraf ingesteld en niet aanpasbaar op de site.</p>
+<p>Vul in de code de scores in voor kwartfinale, halve finale en finale. Niet aanpasbaar op de site.</p>
 
 <script>
-// Scores en spelers instellen in de code
+// Spelers en scores in code instellen
 const spelers = [
   { naam: 'Renzo', score: '2' },
   { naam: 'Lennart', score: '1' },
-  { naam: 'Paul-David', score: '/' },
+  { naam: 'Paul-David', score: '0' },
   { naam: 'Remi', score: '2' },
   { naam: 'Nino', score: '1' },
   { naam: 'Noah', score: '2' },
   { naam: 'Daniel', score: '2' },
-  { naam: 'Arne', score: '/' }
+  { naam: 'Arne', score: '0' }
 ];
 
-// Functie om winnaar van een match te bepalen
-function bepaalWinnaar(speler1, speler2) {
-  const s1 = speler1.score;
-  const s2 = speler2.score;
-  if (s1 === '/' || s2 === '/') return { naam: 'Not decided yet', score: '/' };
-  return parseInt(s1) > parseInt(s2) ? speler1 : speler2;
+// Scores halve finale en finale instellen (vul '/' als nog niet gespeeld)
+let halveFinaleScores = [ { s1: '2', s2: '0' }, { s1: '1', s2: '2' } ];
+let finaleScores = { s1: '2', s2: '0' };
+
+function bepaalWinnaar(speler1, speler2, score1='/', score2='/') {
+  if(score1 === '/' || score2 === '/') return { naam: 'Not decided yet', score: '/' };
+  return parseInt(score1) > parseInt(score2) ? speler1 : speler2;
 }
 
 // Kwartfinales
-const qf1 = bepaalWinnaar(spelers[0], spelers[1]);
-const qf2 = bepaalWinnaar(spelers[2], spelers[3]);
-const qf3 = bepaalWinnaar(spelers[4], spelers[5]);
-const qf4 = bepaalWinnaar(spelers[6], spelers[7]);
+const qf1 = bepaalWinnaar(spelers[0], spelers[1], spelers[0].score, spelers[1].score);
+const qf2 = bepaalWinnaar(spelers[2], spelers[3], spelers[2].score, spelers[3].score);
+const qf3 = bepaalWinnaar(spelers[4], spelers[5], spelers[4].score, spelers[5].score);
+const qf4 = bepaalWinnaar(spelers[6], spelers[7], spelers[6].score, spelers[7].score);
 
 // Halve finales
-const sf1 = bepaalWinnaar(qf1, qf2);
-const sf2 = bepaalWinnaar(qf3, qf4);
+const sf1 = bepaalWinnaar(qf1, qf2, halveFinaleScores[0].s1, halveFinaleScores[0].s2);
+const sf2 = bepaalWinnaar(qf3, qf4, halveFinaleScores[1].s1, halveFinaleScores[1].s2);
 
 // Finale
-const finale = bepaalWinnaar(sf1, sf2);
+const finale = bepaalWinnaar(sf1, sf2, finaleScores.s1, finaleScores.s2);
 
 // HTML weergeven
 document.write('<div class="round"><h3>Kwartfinales</h3>');
@@ -57,11 +58,11 @@ document.write('<div class="match">' + spelers[4].naam + ' (' + spelers[4].score
 document.write('<div class="match">' + spelers[6].naam + ' (' + spelers[6].score + ') vs ' + spelers[7].naam + ' (' + spelers[7].score + ')</div></div>');
 
 document.write('<div class="round"><h3>Halve Finales</h3>');
-document.write('<div class="match">' + qf1.naam + ' (' + qf1.score + ') vs ' + qf2.naam + ' (' + qf2.score + ')</div>');
-document.write('<div class="match">' + qf3.naam + ' (' + qf3.score + ') vs ' + qf4.naam + ' (' + qf4.score + ')</div></div>');
+document.write('<div class="match">' + qf1.naam + ' (' + halveFinaleScores[0].s1 + ') vs ' + qf2.naam + ' (' + halveFinaleScores[0].s2 + ')</div>');
+document.write('<div class="match">' + qf3.naam + ' (' + halveFinaleScores[1].s1 + ') vs ' + qf4.naam + ' (' + halveFinaleScores[1].s2 + ')</div></div>');
 
 document.write('<div class="round"><h3>Finale</h3>');
-document.write('<div class="match">' + sf1.naam + ' (' + sf1.score + ') vs ' + sf2.naam + ' (' + sf2.score + ')</div></div>');
+document.write('<div class="match">' + sf1.naam + ' (' + finaleScores.s1 + ') vs ' + sf2.naam + ' (' + finaleScores.s2 + ')</div></div>');
 
 document.write('<div class="winner-box">Winnaar: ' + finale.naam + '</div>');
 </script>
