@@ -1,4 +1,5 @@
 let gekozenGame = "";
+let gekozenSpelers = [];
 let rondes = [];
 
 function kiesGame(game) {
@@ -13,14 +14,30 @@ function terugNaarMenu() {
     document.getElementById('game-card').classList.add('active-screen');
 }
 
-function startTournament() {
-    let input = document.getElementById('player-input').value;
-    let spelers = input.split(',').map(s => s.trim()).filter(s => s !== "");
-    
-    if (spelers.length < 2) { alert("Voeg minimaal 2 spelers toe!"); return; }
+function addVasteSpeler(btn, naam) {
+    if (!gekozenSpelers.includes(naam)) {
+        gekozenSpelers.push(naam);
+        btn.classList.add('selected');
+    } else {
+        gekozenSpelers = gekozenSpelers.filter(s => s !== naam);
+        btn.classList.remove('selected');
+    }
+}
 
-    spelers.sort(() => Math.random() - 0.5); // Shuffle
-    rondes = [spelers];
+function startTournament() {
+    let extraInput = document.getElementById('player-input').value;
+    let extraSpelers = extraInput.split(',').map(s => s.trim()).filter(s => s !== "");
+    
+    // Combineer vaste lijst met extra namen
+    let alleSpelers = [...new Set([...gekozenSpelers, ...extraSpelers])];
+    
+    if (alleSpelers.length < 2) {
+        alert("Voeg minimaal 2 spelers toe!");
+        return;
+    }
+
+    alleSpelers.sort(() => Math.random() - 0.5); // Shuffle
+    rondes = [alleSpelers];
     
     document.getElementById('setup-card').classList.remove('active-screen');
     document.getElementById('bracket-card').classList.add('active-screen');
@@ -60,11 +77,11 @@ function winnaarKiezen(naam, rondeIndex) {
     if (!rondes[rondeIndex + 1]) rondes[rondeIndex + 1] = [];
     rondes[rondeIndex + 1].push(naam);
     
-    if (rondes[rondeIndex + 1].length === 1 && rondes[rondeIndex + 1].length >= 1 && rondeIndex + 1 > 0 && rondes[rondeIndex + 1][0] === naam && rondes[rondeIndex].length === 1) {
+    if (rondes[rondeIndex].length > 1 && rondes[rondeIndex + 1].length === Math.ceil(rondes[rondeIndex].length / 2)) {
+        renderRonde();
+    } else if (rondes[rondeIndex + 1].length === 1 && rondes[rondeIndex].length === 1) {
         document.getElementById('champion-name').innerText = naam;
         document.getElementById('winner-overlay').classList.remove('hidden');
-    } else {
-        renderRonde();
     }
 }
 
