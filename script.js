@@ -29,12 +29,9 @@ function startTournament() {
     let extraSpelers = extraInput.split(',').map(s => s.trim()).filter(s => s !== "");
     let alleSpelers = [...new Set([...gekozenSpelers, ...extraSpelers])];
     
-    if (alleSpelers.length < 2) {
-        alert("Voeg minimaal 2 spelers toe!");
-        return;
-    }
+    if (alleSpelers.length < 2) { alert("Voeg minimaal 2 spelers toe!"); return; }
 
-    alleSpelers.sort(() => Math.random() - 0.5); 
+    alleSpelers.sort(() => Math.random() - 0.5);
     rondes = [alleSpelers];
     
     document.getElementById('setup-card').classList.remove('active-screen');
@@ -46,13 +43,11 @@ function startTournament() {
 function renderRonde() {
     const container = document.getElementById('rounds-container');
     container.innerHTML = "";
-    
-    // We tonen alleen de laatst gespeelde ronde
     let index = rondes.length - 1;
     let rondeSpelers = rondes[index];
     
     let rondeDiv = document.createElement('div');
-    rondeDiv.innerHTML = `<h3>Ronde ${index + 1}</h3>`;
+    rondeDiv.innerHTML = `<h3 style="color: #aaa; margin-top:20px;">Ronde ${index + 1}</h3>`;
     
     for (let i = 0; i < rondeSpelers.length; i += 2) {
         let match = document.createElement('div');
@@ -60,40 +55,39 @@ function renderRonde() {
         
         if (rondeSpelers[i+1]) {
             match.innerHTML = `
-                <button onclick="winnaarKiezen('${rondeSpelers[i]}', ${index})">${rondeSpelers[i]}</button>
-                <span>VS</span>
-                <button onclick="winnaarKiezen('${rondeSpelers[i+1]}', ${index})">${rondeSpelers[i+1]}</button>
+                <button onclick="winnaarKiezen('${rondeSpelers[i]}', ${index}, this)">${rondeSpelers[i]}</button>
+                <span style="color:#555">VS</span>
+                <button onclick="winnaarKiezen('${rondeSpelers[i+1]}', ${index}, this)">${rondeSpelers[i+1]}</button>
             `;
         } else {
-            match.innerHTML = `<div class="bye-text">✨ ${rondeSpelers[i]} gaat door (Bye)</div>`;
-            // Bye speler gaat direct door naar de volgende ronde
-            setTimeout(() => winnaarKiezen(rondeSpelers[i], index), 1000);
+            match.innerHTML = `<div class="bye-text">✨ ${rondeSpelers[i]} krijgt een bye!</div>`;
+            setTimeout(() => winnaarKiezen(rondeSpelers[i], index, null), 1000);
         }
         rondeDiv.appendChild(match);
     }
     container.appendChild(rondeDiv);
 }
 
-function winnaarKiezen(naam, rondeIndex) {
-    if (!rondes[rondeIndex + 1]) rondes[rondeIndex + 1] = [];
-    
-    // Voeg winnaar alleen toe als hij er nog niet in staat (voorkomt dubbels door Bye/Klik)
-    if (!rondes[rondeIndex + 1].includes(naam)) {
-        rondes[rondeIndex + 1].push(naam);
+function winnaarKiezen(naam, rondeIndex, btnElement) {
+    if (btnElement) {
+        btnElement.classList.add('winner-selected');
+        let buttons = btnElement.parentElement.querySelectorAll('button');
+        buttons.forEach(b => b.disabled = true);
     }
     
-    // Check of de huidige ronde klaar is
-    let aantalVerwachteWinnaars = Math.ceil(rondes[rondeIndex].length / 2);
-    
-    if (rondes[rondeIndex + 1].length === aantalVerwachteWinnaars) {
-        // Is er nog maar 1 speler over? Dan is er een toernooiwinnaar!
-        if (rondes[rondeIndex + 1].length === 1) {
-            document.getElementById('champion-name').innerText = rondes[rondeIndex + 1][0];
-            document.getElementById('winner-overlay').classList.remove('hidden');
-        } else {
-            renderRonde();
+    setTimeout(() => {
+        if (!rondes[rondeIndex + 1]) rondes[rondeIndex + 1] = [];
+        if (!rondes[rondeIndex + 1].includes(naam)) rondes[rondeIndex + 1].push(naam);
+        
+        if (rondes[rondeIndex + 1].length === Math.ceil(rondes[rondeIndex].length / 2)) {
+            if (rondes[rondeIndex + 1].length === 1) {
+                document.getElementById('champion-name').innerText = naam;
+                document.getElementById('winner-overlay').classList.remove('hidden');
+            } else {
+                renderRonde();
+            }
         }
-    }
+    }, 400);
 }
 
 function sluitWinnaarPopup() { document.getElementById('winner-overlay').classList.add('hidden'); }
