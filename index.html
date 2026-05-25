@@ -2,91 +2,57 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tournament Bracket Maker</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; }
-        .screen { display: none; }
-        .active { display: block; }
-        button { margin: 5px; padding: 10px 20px; cursor: pointer; }
-        #spelerLijst { margin: 20px 0; font-weight: bold; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tournament Bracket</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="screen1" class="screen active">
-        <h1>Kies je game</h1>
-        <button onclick="selectGame('Polytopia')">Polytopia</button>
-        <button onclick="selectGame('Snooker')">Snooker</button>
-        <button onclick="selectGame('Rollo Rush')">Rollo Rush</button>
-        <button onclick="selectGame('Normale Bracket')">Normale Bracket</button>
-    </div>
-
-    <div id="screen2" class="screen">
-        <h2 id="gameTitel"></h2>
-        <div>
-            <h3>Vrienden:</h3>
-            <button onclick="addPlayer('Jan')">Jan</button>
-            <button onclick="addPlayer('Piet')">Piet</button>
-            <button onclick="addPlayer('Marie')">Marie</button>
+    <div class="app-container">
+        <h1 id="main-title">🏆 Tournament Generator</h1>
+        
+        <div id="game-card" class="card active-screen">
+            <h2>Kies je Game</h2>
+            <p class="subtitle">Selecteer de game voor dit toernooi</p>
+            <div class="game-options">
+                <button class="game-btn" onclick="kiesGame('Polytopia')">👑 Polytopia</button>
+                <button class="game-btn" onclick="kiesGame('Rollo Rush')">🦔 Rollo Rush</button>
+                <button class="game-btn" onclick="kiesGame('Normale Bracket')">⚔️ Normaal</button>
+            </div>
         </div>
-        <div>
-            <input type="text" id="customNaam" placeholder="Andere naam...">
-            <button onclick="addCustomPlayer()">Voeg toe</button>
+        
+        <div id="setup-card" class="card hidden-screen">
+            <div class="card-header">
+                <h2>Spelers</h2>
+                <button class="back-btn" onclick="terugNaarMenu()">⬅ Menu</button>
+            </div>
+            <p class="subtitle">Voer namen in (gescheiden door komma's)</p>
+            <textarea id="player-input" placeholder="Senne, Milan, Thomas, Ruben..."></textarea>
+            <button class="action-btn" onclick="startTournament()">Start Toernooi</button>
         </div>
-        <div id="spelerLijst">Spelers: </div>
-        <button onclick="startBracket()">Start Toernooi</button>
+
+        <div id="bracket-card" class="card hidden-screen">
+            <div class="bracket-header">
+                <h2 id="bracket-title">Toernooi Schema</h2>
+                <button class="reset-btn" onclick="resetTournament()">Nieuw</button>
+            </div>
+            <div id="rounds-container" class="rounds-container">
+                </div>
+        </div>
     </div>
 
-    <div id="screen3" class="screen">
-        <h2>Toernooi bezig!</h2>
-        <div id="bracketContainer"></div>
-        <button onclick="location.reload()">Opnieuw beginnen</button>
+    <div id="winner-overlay" class="overlay hidden">
+        <div class="winner-card">
+            <div class="confetti">🎉🥳🎉🥳🎉</div>
+            <h2>WINNAAR!</h2>
+            <div class="champion-badge">
+                <span class="big-crown">👑</span>
+                <h1 id="champion-name">NAAM</h1>
+            </div>
+            <button class="celebrate-btn" onclick="sluitWinnaarPopup()">Bekijk Bracket</button>
+        </div>
     </div>
 
-    <script>
-        let gekozenGame = "";
-        let spelers = [];
-
-        function selectGame(game) {
-            gekozenGame = game;
-            document.getElementById('gameTitel').innerText = "Spelers voor " + game;
-            showScreen('screen2');
-        }
-
-        function addPlayer(naam) {
-            if (!spelers.includes(naam)) {
-                spelers.push(naam);
-                updateLijst();
-            }
-        }
-
-        function addCustomPlayer() {
-            let input = document.getElementById('customNaam');
-            if (input.value) {
-                addPlayer(input.value);
-                input.value = "";
-            }
-        }
-
-        function updateLijst() {
-            document.getElementById('spelerLijst').innerText = "Spelers: " + spelers.join(', ');
-        }
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function startBracket() {
-            if (spelers.length < 2) {
-                alert("Voeg minimaal 2 spelers toe!");
-                return;
-            }
-            showScreen('screen3');
-            document.getElementById('bracketContainer').innerText = 
-                "Bracket gegenereerd voor " + spelers.length + " spelers. (Hier komt de visualisatie)";
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
