@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tournament Bracket</title>
+    <title>Tournament Generator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,6 +17,7 @@
             <div class="game-options">
                 <button class="game-btn" onclick="kiesGame('Polytopia')">👑 Polytopia</button>
                 <button class="game-btn" onclick="kiesGame('Rollo Rush')">🦔 Rollo Rush</button>
+                <button class="game-btn" onclick="kiesGame('Snooker')">🎱 Snooker</button>
                 <button class="game-btn" onclick="kiesGame('Normale Bracket')">⚔️ Normaal</button>
             </div>
         </div>
@@ -26,8 +27,21 @@
                 <h2>Spelers</h2>
                 <button class="back-btn" onclick="terugNaarMenu()">⬅ Menu</button>
             </div>
-            <p class="subtitle">Voer namen in (gescheiden door komma's)</p>
-            <textarea id="player-input" placeholder="Senne, Milan, Thomas, Ruben..."></textarea>
+            
+            <p class="subtitle">Klik op vrienden om toe te voegen:</p>
+            <div class="button-grid" id="vrienden-grid">
+                <button onclick="addVasteSpeler(this, 'Lennart')">Lennart</button>
+                <button onclick="addVasteSpeler(this, 'Paul-David')">Paul-David</button>
+                <button onclick="addVasteSpeler(this, 'Daniël')">Daniël</button>
+                <button onclick="addVasteSpeler(this, 'Nino')">Nino</button>
+                <button onclick="addVasteSpeler(this, 'Renzo')">Renzo</button>
+                <button onclick="addVasteSpeler(this, 'Remi')">Remi</button>
+                <button onclick="addVasteSpeler(this, 'Jawad')">Jawad</button>
+            </div>
+
+            <p class="subtitle">Andere spelers (komma gescheiden):</p>
+            <textarea id="player-input" placeholder="Bijv: Jan, Sara..."></textarea>
+            
             <button class="action-btn" onclick="startTournament()">Start Toernooi</button>
         </div>
 
@@ -36,8 +50,7 @@
                 <h2 id="bracket-title">Toernooi Schema</h2>
                 <button class="reset-btn" onclick="resetTournament()">Nieuw</button>
             </div>
-            <div id="rounds-container" class="rounds-container">
-                </div>
+            <div id="rounds-container" class="rounds-container"></div>
         </div>
     </div>
 
@@ -50,6 +63,7 @@
                 <h1 id="champion-name">NAAM</h1>
             </div>
             <button class="celebrate-btn" onclick="sluitWinnaarPopup()">Bekijk Bracket</button>
+            <button class="restart-btn" onclick="resetTournament()">Nieuw Toernooi</button>
         </div>
     </div>
 
