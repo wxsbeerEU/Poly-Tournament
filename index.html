@@ -1,192 +1,92 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Poly Tourney - VUB</title>
-
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: url('background.jpg') no-repeat center center fixed;
-    background-size: cover;
-    position: relative;
-    text-align: center;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: -1;
-  }
-
-  h2 {
-    margin-bottom: 5px;
-  }
-
-  /* --- Layout --- */
-  .tournament {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 40px; /* dichter bij elkaar */
-    margin-top: 40px;
-  }
-
-  .round {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    min-width: 220px;
-  }
-
-  .match {
-    background: #fff;
-    padding: 10px 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 220px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    position: relative;
-  }
-
-  /* --- Driehoekvorm afstand --- */
-  .quarter .match:nth-child(1) { margin-top: 0; }
-  .quarter .match:nth-child(2) { margin-top: 50px; }
-  .quarter .match:nth-child(3) { margin-top: 100px; }
-  .quarter .match:nth-child(4) { margin-top: 50px; }
-
-  .semi .match:nth-child(1) { margin-top: 65px; }
-  .semi .match:nth-child(2) { margin-top: 215px; }
-
-  .final .match:nth-child(1) { margin-top: 200px; }
-
-  /* --- Lijnen tussen rondes --- */
-
-  /* Van kwartfinale naar halve finale */
-  .quarter .match::after {
-    content: "";
-    position: absolute;
-    width: 40px;
-    height: 2px;
-    background: #777;
-    right: -40px;
-    top: 50%;
-  }
-
-  /* Van halve finale naar finale */
-  .semi .match::after {
-    content: "";
-    position: absolute;
-    width: 40px;
-    height: 2px;
-    background: #555;
-    right: -40px;
-    top: 50%;
-  }
-
-  /* Finalist naar winnaar */
-  .final .match::after {
-    content: "";
-    position: absolute;
-    width: 40px;
-    height: 2px;
-    background: #333;
-    right: -40px;
-    top: 50%;
-  }
-
-  /* --- Winnaar box direct rechts van finale --- */
-  .winner-box {
-    background: #d4ffd4;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 22px;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    align-self: center;
-    margin-top: 115px; /* uitlijnen met finale */
-    white-space: nowrap;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Bracket Maker</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; }
+        .screen { display: none; }
+        .active { display: block; }
+        button { margin: 5px; padding: 10px 20px; cursor: pointer; }
+        #spelerLijst { margin: 20px 0; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-<h2>Poly Tourney - VUB</h2>
-<p>Battle of Polytopia tournament in the VUB.</p>
+    <div id="screen1" class="screen active">
+        <h1>Kies je game</h1>
+        <button onclick="selectGame('Polytopia')">Polytopia</button>
+        <button onclick="selectGame('Snooker')">Snooker</button>
+        <button onclick="selectGame('Rollo Rush')">Rollo Rush</button>
+        <button onclick="selectGame('Normale Bracket')">Normale Bracket</button>
+    </div>
 
-<div class="tournament">
-  <div class="round quarter" id="quarter"></div>
-  <div class="round semi" id="semi"></div>
-  <div class="round final" id="final"></div>
-  <div class="winner-box" id="winner">Winnaar: ?</div>
-</div>
+    <div id="screen2" class="screen">
+        <h2 id="gameTitel"></h2>
+        <div>
+            <h3>Vrienden:</h3>
+            <button onclick="addPlayer('Jan')">Jan</button>
+            <button onclick="addPlayer('Piet')">Piet</button>
+            <button onclick="addPlayer('Marie')">Marie</button>
+        </div>
+        <div>
+            <input type="text" id="customNaam" placeholder="Andere naam...">
+            <button onclick="addCustomPlayer()">Voeg toe</button>
+        </div>
+        <div id="spelerLijst">Spelers: </div>
+        <button onclick="startBracket()">Start Toernooi</button>
+    </div>
 
-<script>
-// Spelers en scores in code instellen
-const spelers = [
-  { naam: 'Renzo', score: '2' },
-  { naam: 'Lennart', score: '0' },
-  { naam: 'Paul-David', score: '2' },
-  { naam: 'Remi', score: '0' },
-  { naam: 'Nino', score: '2' },
-  { naam: 'Noah', score: '1' },
-  { naam: 'Daniel', score: '1' },
-  { naam: 'Arne', score: '2' }
-];
+    <div id="screen3" class="screen">
+        <h2>Toernooi bezig!</h2>
+        <div id="bracketContainer"></div>
+        <button onclick="location.reload()">Opnieuw beginnen</button>
+    </div>
 
-// Scores halve finale en finale instellen
-let halveFinaleScores = [ { s1: '2', s2: '0' }, { s1: '/', s2: '/' } ];
-let finaleScores = { s1: '/', s2: '/' };
+    <script>
+        let gekozenGame = "";
+        let spelers = [];
 
-function bepaalWinnaar(speler1, speler2, score1='/', score2='/') {
-  if (score1 === '/' || score2 === '/') return { naam: 'Nog niet beslist', score: '/' };
-  return parseInt(score1) > parseInt(score2) ? speler1 : speler2;
-}
+        function selectGame(game) {
+            gekozenGame = game;
+            document.getElementById('gameTitel').innerText = "Spelers voor " + game;
+            showScreen('screen2');
+        }
 
-// Kwartfinales
-const qf = [
-  bepaalWinnaar(spelers[0], spelers[1], spelers[0].score, spelers[1].score),
-  bepaalWinnaar(spelers[2], spelers[3], spelers[2].score, spelers[3].score),
-  bepaalWinnaar(spelers[4], spelers[5], spelers[4].score, spelers[5].score),
-  bepaalWinnaar(spelers[6], spelers[7], spelers[6].score, spelers[7].score)
-];
+        function addPlayer(naam) {
+            if (!spelers.includes(naam)) {
+                spelers.push(naam);
+                updateLijst();
+            }
+        }
 
-// Halve finales
-const sf = [
-  bepaalWinnaar(qf[0], qf[1], halveFinaleScores[0].s1, halveFinaleScores[0].s2),
-  bepaalWinnaar(qf[2], qf[3], halveFinaleScores[1].s1, halveFinaleScores[1].s2)
-];
+        function addCustomPlayer() {
+            let input = document.getElementById('customNaam');
+            if (input.value) {
+                addPlayer(input.value);
+                input.value = "";
+            }
+        }
 
-// Finale
-const finale = bepaalWinnaar(sf[0], sf[1], finaleScores.s1, finaleScores.s2);
+        function updateLijst() {
+            document.getElementById('spelerLijst').innerText = "Spelers: " + spelers.join(', ');
+        }
 
-// HTML genereren
-const qDiv = document.getElementById("quarter");
-const sDiv = document.getElementById("semi");
-const fDiv = document.getElementById("final");
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
-for (let i = 0; i < spelers.length; i += 2) {
-  qDiv.innerHTML += `
-    <div class="match">${spelers[i].naam} (${spelers[i].score})<br>vs<br>${spelers[i+1].naam} (${spelers[i+1].score})</div>`;
-}
-
-sDiv.innerHTML += `
-  <div class="match">${qf[0].naam} (${halveFinaleScores[0].s1})<br>vs<br>${qf[1].naam} (${halveFinaleScores[0].s2})</div>
-  <div class="match">${qf[2].naam} (${halveFinaleScores[1].s1})<br>vs<br>${qf[3].naam} (${halveFinaleScores[1].s2})</div>
-`;
-
-fDiv.innerHTML = `
-  <div class="match">${sf[0].naam} (${finaleScores.s1})<br>vs<br>${sf[1].naam} (${finaleScores.s2})</div>
-`;
-
-document.getElementById("winner").innerText = "Winnaar: " + finale.naam;
-</script>
-
+        function startBracket() {
+            if (spelers.length < 2) {
+                alert("Voeg minimaal 2 spelers toe!");
+                return;
+            }
+            showScreen('screen3');
+            document.getElementById('bracketContainer').innerText = 
+                "Bracket gegenereerd voor " + spelers.length + " spelers. (Hier komt de visualisatie)";
+        }
+    </script>
 </body>
 </html>
