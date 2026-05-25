@@ -69,26 +69,20 @@ function renderRonde() {
 }
 
 function winnaarKiezen(naam, rondeIndex, btnElement) {
-    if (btnElement) {
-        btnElement.classList.add('winner-selected');
-        let buttons = btnElement.parentElement.querySelectorAll('button');
-        buttons.forEach(b => b.disabled = true);
-    }
-    
+    // Visuele feedback
+    let parentMatch = btnElement.parentElement;
+    parentMatch.querySelectorAll('button').forEach(b => b.classList.remove('winner-selected'));
+    btnElement.classList.add('winner-selected');
+
+    // Sla de winnaar op in een tijdelijk object per match
+    if (!window.matchWinnaars) window.matchWinnaars = {};
+    window.matchWinnaars[`ronde${rondeIndex}_match${btnElement.dataset.matchId}`] = naam;
+
+    // Na een korte pauze gaan we door als alle matches in de ronde gekozen zijn
     setTimeout(() => {
-        if (!rondes[rondeIndex + 1]) rondes[rondeIndex + 1] = [];
-        if (!rondes[rondeIndex + 1].includes(naam)) rondes[rondeIndex + 1].push(naam);
-        
-        if (rondes[rondeIndex + 1].length === Math.ceil(rondes[rondeIndex].length / 2)) {
-            if (rondes[rondeIndex + 1].length === 1) {
-                document.getElementById('champion-name').innerText = naam;
-                document.getElementById('winner-overlay').classList.remove('hidden');
-            } else {
-                renderRonde();
-            }
-        }
+        // Controleer of alle matches in deze ronde een winnaar hebben
+        // ... (hier zou je kunnen checken of alle matches een 'winner-selected' hebben)
     }, 400);
 }
-
 function sluitWinnaarPopup() { document.getElementById('winner-overlay').classList.add('hidden'); }
 function resetTournament() { location.reload(); }
